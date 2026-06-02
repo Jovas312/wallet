@@ -8,6 +8,7 @@ import com.wallet.entity.Transaction;
 import com.wallet.entity.Wallet;
 import com.wallet.entity.enums.Status;
 import com.wallet.entity.enums.Type;
+import com.wallet.exception.AccessDeniedException;
 import com.wallet.exception.AuthenticationException;
 import com.wallet.exception.ResourceNotFoundException;
 import com.wallet.exception.TransactionNotCompleted;
@@ -103,13 +104,27 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Page<TransactionResponseDTO> transactions(Pageable pageable) {
-        Page<Transaction> transactions = transactionRepository.findAll(pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationException("Authentication required");
+        }
+        Page<Transaction> transactions = transactionRepository
+                .findAllBySourceWallet_User_Email(authentication.getName(), pageable);
         return transactions.map(transactionMapper::toResponseDTO);
     }
 
     @Override
     public TransactionResponseDTO findById(UUID id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationException("Authentication required");
+        }
+        String currentUserEmail = authentication.getName();
         Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+        String ownerEmail = transaction.getSourceWallet().getUser().getEmail();
+        if (!ownerEmail.equals(currentUserEmail)){
+            throw new AccessDeniedException("You do not have permission to view this transaction");
+        }
         return transactionMapper.toResponseDTO(transaction);
     }
 }

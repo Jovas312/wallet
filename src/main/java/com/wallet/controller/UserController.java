@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,15 +23,17 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<UserResponseDTO> updateuser(@Valid @RequestBody UserRegisterDTO userDTO){
+    @PutMapping("/update/{email}")
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public ResponseEntity<UserResponseDTO> updateuser(@PathVariable String email, @Valid @RequestBody UserRegisterDTO userDTO){
         UserResponseDTO userResponseDTO = userService.updateUser(userDTO);
         return ResponseEntity.ok(userResponseDTO);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/deleted")
-    public void deleteUser(){
+    @DeleteMapping("/deleted/{email}")
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public void deleteUser(@PathVariable String email){
         userService.deleteUserByEmail();
     }
 

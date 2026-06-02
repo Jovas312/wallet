@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -34,14 +35,16 @@ public class TransactionController {
         return ResponseEntity.ok(transactionResponseDTO);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<TransactionResponseDTO>> getTransactions(@PageableDefault(page = 0, size = 20)Pageable pageable) {
+    @GetMapping("/{email}")
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public ResponseEntity<Page<TransactionResponseDTO>> getTransactions(@PathVariable String email, @PageableDefault(page = 0, size = 20)Pageable pageable) {
         Page<TransactionResponseDTO> transactions = transactionService.transactions(pageable);
         return ResponseEntity.ok(transactions);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable UUID id) {
+    @GetMapping("/{id}/{email}")
+    @PreAuthorize("hasRole('ADMIN') or #email == authentication.name")
+    public ResponseEntity<TransactionResponseDTO> getTransactionById(@PathVariable UUID id, @PathVariable String email) {
         TransactionResponseDTO transaction = transactionService.findById(id);
         return ResponseEntity.ok(transaction);
     }
