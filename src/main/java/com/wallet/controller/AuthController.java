@@ -2,9 +2,11 @@ package com.wallet.controller;
 
 import com.wallet.dto.request.AuthDTO;
 import com.wallet.dto.request.UserRegisterDTO;
+import com.wallet.dto.response.AuthResponseDTO;
 import com.wallet.dto.response.UserResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
 import com.wallet.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +23,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody UserRegisterDTO userDTO){
-        UserResponseDTO userResponseDTO = authService.register(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
+    public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody UserRegisterDTO userDTO){
+        AuthResponseDTO authResponseDTO = authService.register(userDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDTO);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<WalletResponseDTO> login(@RequestBody AuthDTO authDTO){
-        WalletResponseDTO walletResponseDTO = authService.login(authDTO);
-        return ResponseEntity.ok(walletResponseDTO);
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthDTO authDTO){
+        AuthResponseDTO authResponseDTO = authService.login(authDTO);
+        return ResponseEntity.ok(authResponseDTO);
     }
 }

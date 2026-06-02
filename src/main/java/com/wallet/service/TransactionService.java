@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public interface TransactionService {
 
-    WalletResponseDTO deposit(DepositRequestDTO depositDTO, String email);
+    WalletResponseDTO deposit(DepositRequestDTO depositDTO);
 
-    TransactionResponseDTO transfer(TransferRequestDTO transferDTO, String email);
+    TransactionResponseDTO transfer(TransferRequestDTO transferDTO);
 
     Page<TransactionResponseDTO> transactions(Pageable pageable);
 

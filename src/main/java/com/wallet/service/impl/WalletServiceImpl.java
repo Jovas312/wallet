@@ -2,11 +2,14 @@ package com.wallet.service.impl;
 
 import com.wallet.dto.response.WalletResponseDTO;
 import com.wallet.entity.Wallet;
+import com.wallet.exception.AuthenticationException;
 import com.wallet.exception.ResourceNotFoundException;
 import com.wallet.mapper.WalletMapper;
 import com.wallet.repository.WalletRepository;
 import com.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +25,18 @@ public class WalletServiceImpl implements WalletService {
     private final WalletMapper walletMapper;
 
     @Override
-    public WalletResponseDTO getWalletByUserEmail(String email) {
-        Wallet wallet = walletRepository.findByUser_Email(email).orElseThrow(() -> new RuntimeException("Wallet not found"));
+    public WalletResponseDTO getWalletByUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationException("Authentication required");
+        }
+        Wallet wallet = walletRepository.findByUser_Email(authentication.getName()).orElseThrow(() -> new RuntimeException("Wallet not found"));
         return walletMapper.toResponseDTO(wallet);
     }
 
     @Override
     public void createWallet(Wallet wallet) {
-        Wallet savedWallet = walletRepository.save(wallet);
+        walletRepository.save(wallet);
     }
 
     @Override

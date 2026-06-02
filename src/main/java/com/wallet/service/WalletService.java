@@ -5,7 +5,7 @@ import com.wallet.entity.Wallet;
 
 public interface WalletService {
 
-    WalletResponseDTO getWalletByUserEmail(String email);
+    WalletResponseDTO getWalletByUserEmail();
 
     void createWallet(Wallet wallet);
 
