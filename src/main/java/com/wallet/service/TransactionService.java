@@ -22,4 +22,5 @@ public interface TransactionService {
     TransactionResponseDTO findById(UUID id);
 
     CargoResponseApiDTO ejecutarCobro(CargoRequestApiDTO cargoRequestApiDTO);
+
 }

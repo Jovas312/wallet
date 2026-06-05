@@ -1,9 +1,6 @@
 package com.wallet.service.impl;
 
-import com.wallet.dto.request.CargoRequestApiDTO;
-import com.wallet.dto.request.CustomerRequestDTO;
-import com.wallet.dto.request.DepositRequestDTO;
-import com.wallet.dto.request.TransferRequestDTO;
+import com.wallet.dto.request.*;
 import com.wallet.dto.response.CargoResponseApiDTO;
 import com.wallet.dto.response.TransactionResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
@@ -22,7 +19,6 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -134,6 +129,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CargoResponseApiDTO ejecutarCobro(CargoRequestApiDTO cargoRequestApiDTO) {
 
         System.out.println("Inicando procesamiento de cobro por un monto de: " + cargoRequestApiDTO.amount());
@@ -159,8 +155,23 @@ public class TransactionServiceImpl implements TransactionService {
 
             CargoResponseApiDTO cobroResponse = externalApiGateway.procesarCargoTarjeta(requestCompleted);
 
-            System.out.println("Cobro completado por un monto de: " +  cobroResponse.amount());
+            if (cobroResponse.status() != null && cobroResponse.status().equalsIgnoreCase("completed")){
+
+                System.out.println("Cobro completado por un monto de: " +  cobroResponse.amount());
+
+                Wallet wallet = walletRepository.findByUser_Email(authentication.getName())
+                        .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
+
+                BigDecimal depositAmount = cargoRequestApiDTO.amount();
+                wallet.setBalance(wallet.getBalance().add(depositAmount));
+                walletRepository.saveAndFlush(wallet);
+
+            } else {
+                throw new PaymentException("El pago no pudo ser procesado por la pasarela: " + cobroResponse.status());
+            }
+
             return cobroResponse;
+
         }
         throw new InsufficientAuthenticationException("Usuario no autenticado o sesión inválida para procesar el pago.");
     }

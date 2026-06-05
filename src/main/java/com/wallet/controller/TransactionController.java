@@ -1,9 +1,6 @@
 package com.wallet.controller;
 
-import com.wallet.dto.request.CargoRequestApiDTO;
-import com.wallet.dto.request.CustomerRequestDTO;
-import com.wallet.dto.request.DepositRequestDTO;
-import com.wallet.dto.request.TransferRequestDTO;
+import com.wallet.dto.request.*;
 import com.wallet.dto.response.CargoResponseApiDTO;
 import com.wallet.dto.response.TransactionResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
