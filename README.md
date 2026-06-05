@@ -79,6 +79,7 @@ La API quedará disponible en: `http://localhost:8080`
 ## 📡 Guía de uso de la API
 
 > **Base URL LOCAL-HOST:** `http://localhost:8080/api/v1`
+> 
 > **Base URL Render:** `https://wallet-api-prod.onrender.com/api/v1`
 >
 > Los endpoints marcados con 🔒 requieren el header `Authorization: Bearer <token>`.
