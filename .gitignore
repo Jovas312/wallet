@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ocultar el archivo de configuración secreta 👈 ESTO ES LO CORRECTO
+.env

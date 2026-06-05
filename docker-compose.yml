@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  wallet-db:
+    image: postgres:15-alpine
+    container_name: wallet_database_container
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  wallet-app:
+    build: .
+    container_name: wallet_api_container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://wallet-db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+      SECRETKEY: ${SECRETKEY}
+    depends_on:
+      - wallet-db
+volumes:
+  db_data:

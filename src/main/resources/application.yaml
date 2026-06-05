@@ -2,10 +2,15 @@ spring:
   application:
     name: wallet
   datasource:
-    url: jdbc:postgresql://localhost:5432/wallet_db
-    username: postgres
-    password: Jov@ny23
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wallet_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:Jov@ny23}
     driver-class-name: org.postgresql.Driver
+jwt:
+  secret:
+    key: ${SECRETKEY:da4e0b90d57579339b6920cf5c9bcc10f9fec7167ff4f3ef42cee94a8978e5ba}
+  expiration:
+    time: 86400000
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

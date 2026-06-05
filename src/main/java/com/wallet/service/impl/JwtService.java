@@ -4,6 +4,7 @@ import com.wallet.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,10 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "da4e0b90d57579339b6920cf5c9bcc10f9fec7167ff4f3ef42cee94a8978e5ba";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 8;
+    @Value("${jwt.secret.key}")
+    private String SECRET_KEY;
+    @Value("${jwt.expiration.time}")
+    private long EXPIRATION_TIME;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
