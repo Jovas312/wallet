@@ -2,13 +2,13 @@ spring:
   application:
     name: wallet
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/wallet_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:Jov@ny23}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 jwt:
   secret:
-    key: ${SECRETKEY:da4e0b90d57579339b6920cf5c9bcc10f9fec7167ff4f3ef42cee94a8978e5ba}
+    key: ${SECRETKEY}
   expiration:
     time: 86400000
 
@@ -32,6 +32,6 @@ logging:
 
 openpay:
   sandbox:
-    base-url: https://sandbox-api.openpay.mx/v1
-    merchant-id: mxipm8p3keuc9u4fpxzl
-    private-key: sk_566e53d64c194ccc92684dc3a59d3141
+    base-url: ${BASE_URL}
+    merchant-id: ${MERCHANT_ID}
+    private-key: ${PRIVATE_KEY}
