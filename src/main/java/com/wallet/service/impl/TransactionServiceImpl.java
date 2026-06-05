@@ -1,17 +1,18 @@
 package com.wallet.service.impl;
 
+import com.wallet.dto.request.CargoRequestApiDTO;
+import com.wallet.dto.request.CustomerRequestDTO;
 import com.wallet.dto.request.DepositRequestDTO;
 import com.wallet.dto.request.TransferRequestDTO;
+import com.wallet.dto.response.CargoResponseApiDTO;
 import com.wallet.dto.response.TransactionResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
 import com.wallet.entity.Transaction;
+import com.wallet.entity.User;
 import com.wallet.entity.Wallet;
 import com.wallet.entity.enums.Status;
 import com.wallet.entity.enums.Type;
-import com.wallet.exception.AccessDeniedException;
-import com.wallet.exception.AuthenticationException;
-import com.wallet.exception.ResourceNotFoundException;
-import com.wallet.exception.TransactionNotCompleted;
+import com.wallet.exception.*;
 import com.wallet.mapper.TransactionMapper;
 import com.wallet.mapper.WalletMapper;
 import com.wallet.repository.TransactionRepository;
@@ -21,12 +22,15 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -38,6 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final WalletMapper walletMapper;
     private final WalletRepository walletRepository;
+    private final ExternalApiGateway externalApiGateway;
 
 
     @Override
@@ -127,4 +132,37 @@ public class TransactionServiceImpl implements TransactionService {
         }
         return transactionMapper.toResponseDTO(transaction);
     }
+
+    @Override
+    public CargoResponseApiDTO ejecutarCobro(CargoRequestApiDTO cargoRequestApiDTO) {
+
+        System.out.println("Inicando procesamiento de cobro por un monto de: " + cargoRequestApiDTO.amount());
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            User userLogued = (User) authentication.getPrincipal();
+            String firstName = userLogued.getFirstName();
+            String lastName = userLogued.getLastName();
+            String email = userLogued.getEmail();
+
+            CustomerRequestDTO customerAuto = new CustomerRequestDTO(firstName, lastName, email);
+
+            CargoRequestApiDTO requestCompleted = new CargoRequestApiDTO(
+                    cargoRequestApiDTO.method(),
+                    cargoRequestApiDTO.amount(),
+                    cargoRequestApiDTO.description(),
+                    cargoRequestApiDTO.sourceId(),
+                    cargoRequestApiDTO.deviceSessionId(),
+                    customerAuto
+            );
+
+            CargoResponseApiDTO cobroResponse = externalApiGateway.procesarCargoTarjeta(requestCompleted);
+
+            System.out.println("Cobro completado por un monto de: " +  cobroResponse.amount());
+            return cobroResponse;
+        }
+        throw new InsufficientAuthenticationException("Usuario no autenticado o sesión inválida para procesar el pago.");
+    }
+
 }

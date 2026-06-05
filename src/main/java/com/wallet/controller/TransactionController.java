@@ -1,10 +1,15 @@
 package com.wallet.controller;
 
+import com.wallet.dto.request.CargoRequestApiDTO;
+import com.wallet.dto.request.CustomerRequestDTO;
 import com.wallet.dto.request.DepositRequestDTO;
 import com.wallet.dto.request.TransferRequestDTO;
+import com.wallet.dto.response.CargoResponseApiDTO;
 import com.wallet.dto.response.TransactionResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
+import com.wallet.entity.User;
 import com.wallet.service.TransactionService;
+import com.wallet.service.impl.ExternalApiGateway;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +27,7 @@ import java.util.UUID;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final ExternalApiGateway externalApiGateway;
 
     @PostMapping("/deposit")
     public ResponseEntity<WalletResponseDTO> deposit(@Valid @RequestBody DepositRequestDTO depositDTO) {
@@ -49,5 +55,10 @@ public class TransactionController {
         return ResponseEntity.ok(transaction);
     }
 
+    @PostMapping("/pagos/cargo-tarjeta")
+    public ResponseEntity<CargoResponseApiDTO> ejecutarCobro(@RequestBody CargoRequestApiDTO request){
+        CargoResponseApiDTO cargo = transactionService.ejecutarCobro(request);
+        return ResponseEntity.ok(cargo);
+    }
 
 }

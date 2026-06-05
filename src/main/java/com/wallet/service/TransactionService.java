@@ -1,7 +1,9 @@
 package com.wallet.service;
 
+import com.wallet.dto.request.CargoRequestApiDTO;
 import com.wallet.dto.request.DepositRequestDTO;
 import com.wallet.dto.request.TransferRequestDTO;
+import com.wallet.dto.response.CargoResponseApiDTO;
 import com.wallet.dto.response.TransactionResponseDTO;
 import com.wallet.dto.response.WalletResponseDTO;
 import org.springframework.data.domain.Page;
@@ -18,4 +20,6 @@ public interface TransactionService {
     Page<TransactionResponseDTO> transactions(Pageable pageable);
 
     TransactionResponseDTO findById(UUID id);
+
+    CargoResponseApiDTO ejecutarCobro(CargoRequestApiDTO cargoRequestApiDTO);
 }

@@ -1,5 +1,6 @@
 package com.wallet.service.impl;
 
+import com.wallet.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -27,6 +28,12 @@ public class JwtService {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("roles", userDetails.getAuthorities().stream()
                 .map(auth -> auth.getAuthority()).toList());
+
+        if (userDetails instanceof User){
+            User user = (User) userDetails;
+            extraClaims.put("firstName", user.getFirstName());
+            extraClaims.put("lastName", user.getLastName());
+        }
 
         return Jwts.builder()
                 .claims(extraClaims)
@@ -61,6 +68,14 @@ public class JwtService {
 
     private boolean isTokenExpired(String token) {
         return extractCalim(token, Claims::getExpiration).before(new Date());
+    }
+
+    public String extractName(String token){
+        return extractCalim(token, claims -> claims.get("firstName", String.class));
+    }
+
+    public String extractLastName(String token){
+        return extractCalim(token, claims -> claims.get("lastName", String.class));
     }
 
 }

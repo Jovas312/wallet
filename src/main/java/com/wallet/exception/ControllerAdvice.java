@@ -96,4 +96,16 @@ public class ControllerAdvice {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(InsufficientAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientAuthenticationException(InsufficientAuthenticationException ex){
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                HttpStatus.NOT_ACCEPTABLE.getReasonPhrase(),
+                ex.getMessage(),
+                null
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+    }
 }
