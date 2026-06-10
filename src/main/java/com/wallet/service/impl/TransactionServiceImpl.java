@@ -45,7 +45,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public WalletResponseDTO deposit(DepositRequestDTO depositDTO) {
-        UUID userId = null;
+        UUID walletId = null;
         try {
             if (depositDTO.amount().compareTo(BigDecimal.ZERO) <= 0){
                 throw new IllegalArgumentException("Amount must be greater than zero");
@@ -58,18 +58,18 @@ public class TransactionServiceImpl implements TransactionService {
             Wallet wallet = walletRepository.findByUser_Email(authentication.getName())
                     .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
 
-            userId = wallet.getUser().getId();
+            walletId = wallet.getId();
 
             BigDecimal depositAmount = depositDTO.amount();
             wallet.setBalance(wallet.getBalance().add(depositAmount));
             Wallet savedWallet = walletRepository.save(wallet);
             String mensajeExito = "¡Depósito exitoso! Se han abonado $" + depositAmount + " a tu cuenta.";
-            messagingTemplate.convertAndSend("/topic/wallet/" + userId, mensajeExito);
+            messagingTemplate.convertAndSend("/topic/wallet/" + walletId, mensajeExito);
             return walletMapper.toResponseDTO(savedWallet);
         } catch (Exception e) {
             String messageFaild = "El deposito de $" + depositDTO.amount() + "ha fallado. Motivo: " + e.getMessage();
-            if (userId != null){
-                messagingTemplate.convertAndSend("/topic/wallet" + userId, messageFaild);
+            if (walletId != null){
+                messagingTemplate.convertAndSend("/topic/wallet" + walletId, messageFaild);
             }
             throw e;
         }
