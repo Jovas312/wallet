@@ -2,15 +2,10 @@ spring:
   application:
     name: wallet
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/${DB_NAME}}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-jwt:
-  secret:
-    key: ${SECRETKEY}
-  expiration:
-    time: 86400000
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -24,6 +19,13 @@ jwt:
   flyway:
     enabled: true
     baseline-on-migrate: true
+
+
+jwt:
+  secret:
+    key: ${SECRETKEY}
+  expiration:
+    time: 86400000
 
 logging:
   level:

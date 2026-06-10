@@ -19,6 +19,7 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,26 +39,40 @@ public class TransactionServiceImpl implements TransactionService {
     private final WalletMapper walletMapper;
     private final WalletRepository walletRepository;
     private final ExternalApiGateway externalApiGateway;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public WalletResponseDTO deposit(DepositRequestDTO depositDTO) {
-        if (depositDTO.amount().compareTo(BigDecimal.ZERO) <= 0){
-            throw new IllegalArgumentException("Amount must be greater than zero");
-        }
+        UUID userId = null;
+        try {
+            if (depositDTO.amount().compareTo(BigDecimal.ZERO) <= 0){
+                throw new IllegalArgumentException("Amount must be greater than zero");
+            }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenticationException("Authentication required");
-        }
-        Wallet wallet = walletRepository.findByUser_Email(authentication.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new AuthenticationException("Authentication required");
+            }
+            Wallet wallet = walletRepository.findByUser_Email(authentication.getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("Wallet not found"));
 
-        BigDecimal depositAmount = depositDTO.amount();
-        wallet.setBalance(wallet.getBalance().add(depositAmount));
-        Wallet savedWallet = walletRepository.save(wallet);
-        return walletMapper.toResponseDTO(savedWallet);
+            userId = wallet.getUser().getId();
+
+            BigDecimal depositAmount = depositDTO.amount();
+            wallet.setBalance(wallet.getBalance().add(depositAmount));
+            Wallet savedWallet = walletRepository.save(wallet);
+            String mensajeExito = "¡Depósito exitoso! Se han abonado $" + depositAmount + " a tu cuenta.";
+            messagingTemplate.convertAndSend("/topic/wallet/" + userId, mensajeExito);
+            return walletMapper.toResponseDTO(savedWallet);
+        } catch (Exception e) {
+            String messageFaild = "El deposito de $" + depositDTO.amount() + "ha fallado. Motivo: " + e.getMessage();
+            if (userId != null){
+                messagingTemplate.convertAndSend("/topic/wallet" + userId, messageFaild);
+            }
+            throw e;
+        }
     }
 
     @Override

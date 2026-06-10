@@ -34,9 +34,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> {
+            csrf.ignoringRequestMatchers("/ws-wallet/**");
+            csrf.disable();
+                })
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v1/auth/**").permitAll();
+                    auth.requestMatchers("/ws-wallet/**").permitAll();
                     auth.requestMatchers("/api/v1/transactions/**").authenticated();
                     auth.requestMatchers("/api/v1/users/**").authenticated();
                     auth.anyRequest().denyAll();
