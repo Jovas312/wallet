@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet API - Registro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">💳 Wallet API</div>
+    </nav>
+
+    <main class="container">
+        <section class="card-view">
+            <h2>Crear Cuenta Nueva</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regFirstName">Nombre</label>
+                    <input type="text" id="regFirstName" placeholder="Juan" required>
+                </div>
+                <div class="form-group">
+                    <label for="regLastName">Apellido</label>
+                    <input type="text" id="regLastName" placeholder="Pérez" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Correo Electrónico</label>
+                    <input type="email" id="regEmail" placeholder="juan@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Contraseña</label>
+                    <input type="password" id="regPassword" placeholder="Mínimo 8 caracteres" minlength="8" required>
+                </div>
+                <div class="form-group">
+                    <label for="regDocumentId">Identificación Oficial (INE/RFC)</label>
+                    <input type="text" id="regDocumentId" placeholder="PERJ900101ABC" required>
+                </div>
+                <button type="submit" class="btn-primary"> <a href="login.html">Registrarse</a></button>
+            </form>
+            <p class="switch-text">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></p>
+        </section>
+
+    </main>
+
+    <footer class="desarrolladores">
+        <p>Desarrolladores:</p>
+        <br>
+        <ul>
+            <li>Jovany Alvarez</li>
+            <li>Axel Torres</li>
+        </ul>
+    </footer>
+
+    <script src="registro.js"></script>
+</body>
+
+</html>
