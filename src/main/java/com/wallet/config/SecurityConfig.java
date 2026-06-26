@@ -44,7 +44,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/transactions/**").authenticated();
                     auth.requestMatchers("/api/v1/users/**").authenticated();
                     auth.requestMatchers("/", "/index.html", "/favicon.ico", "/*.js", "/*.css").permitAll();
-                    auth.anyRequest().denyAll();
+                    auth.anyRequest().authenticated();
                 })
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
