@@ -50,6 +50,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/ws-wallet/**").permitAll();
                     auth.requestMatchers("/api/v1/transactions/**").authenticated();
                     auth.requestMatchers("/api/v1/users/**").authenticated();
+                    auth.requestMatchers("/api/v1/wallet/**").authenticated();
                     auth.requestMatchers("/", "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.ico", "/**/*.png", "/**/*.jpg").permitAll();
                     auth.anyRequest().denyAll();
                 })
