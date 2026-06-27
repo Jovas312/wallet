@@ -9,94 +9,136 @@
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="logo"> Mi Billetera</div>
-        <div class="nav-actions">
-            <button id="btnLogout" class="btn-danger">Cerrar Sesión</button>
-        </div>
-    </nav>
+<nav class="navbar">
+    <div class="logo">Mi Billetera</div>
+    <div class="nav-actions">
+        <button id="btnSettings" class="btn-icon">⚙️</button>
+        <button id="btnLogout" class="btn-danger">Cerrar Sesión</button>
+    </div>
+</nav>
 
-    <main class="container">
-        <div class="dashboard-grid">
-            <div class="card balance-card">
-                <h3>Saldo Disponible</h3>
-                <p class="balance-amount">$<span id="walletBalance">0.00</span> MXN</p>
-                <p class="user-welcome">Usuario: <span id="userEmailLabel">...</span></p>
-            </div>
-
-            <div class="card actions-card">
-                <h3>Operaciones Rápidas</h3>
-                <div class="actions-buttons">
-                    <button onclick="openModal('depositModal')" class="btn-action"> Depositar</button>
-                    <button onclick="openModal('transferModal')" class="btn-action"> Transferir</button>
-                </div>
-            </div>
+<main class="container">
+    <div class="dashboard-grid">
+        <div class="card balance-card">
+            <h3>Saldo Disponible</h3>
+            <p class="balance-amount">$<span id="walletBalance">0.00</span> MXN</p>
+            <p class="user-welcome">Usuario: <span id="userEmailLabel">...</span></p>
         </div>
 
-        <div class="card transactions-card">
-            <h3>Historial de Transacciones</h3>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Movimiento</th>
-                            <th>Monto</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsTableBody"></tbody>
-                </table>
+        <div class="card actions-card">
+            <h3>Operaciones Rápidas</h3>
+            <div class="actions-buttons">
+                <button onclick="openModal('depositModal')" class="btn-action">Depositar</button>
+                <button onclick="openModal('transferModal')" class="btn-action">Transferir</button>
+                <button onclick="openModal('paymentModal')" class="btn-action">Pagar con Tarjeta</button>
             </div>
-        </div>
-    </main>
-
-    <div id="depositModal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('depositModal')">&times;</span>
-            <h2>Simular Depósito</h2>
-            <form id="depositForm">
-                <div class="form-group">
-                    <label>Monto a ingresar (Mínimo $10.00)</label>
-                    <input type="number" id="depAmount" required oninvalid="this.setCustomValidity('cifra requerida')"
-                        oninput="this.setCustomValidity('')">
-
-                </div>
-                <button type="submit" class="btn-primary">Confirmar</button>
-            </form>
         </div>
     </div>
 
-    <div id="transferModal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('transferModal')">&times;</span>
-            <h2>Transferir Dinero</h2>
-            <form id="transferForm">
-                <div class="form-group">
-                    <label>Correo del Destinatario</label>
-                    <input type="email" id="transEmail" required oninvalid="this.setCustomValidity('correo requerido')"
-                        oninput="this.setCustomValidity('')">
-                </div>
-                <div class="form-group">
-                    <label>Monto de envío</label>
-                    <input type="number" id="transAmount" min="1" step="0.01" required
-                        oninvalid="this.setCustomValidity('cifra requerida')" oninput="this.setCustomValidity('')">
-                </div>
-                <button type="submit" class="btn-primary">Ejecutar</button>
-            </form>
+    <div class="card transactions-card">
+        <h3>Historial de Transacciones</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Movimiento</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody id="transactionsTableBody"></tbody>
+            </table>
         </div>
     </div>
+</main>
 
-    <footer class="desarrolladores">
-        <p>Desarrolladores:</p>
-        <br>
-        <ul>
-            <li>Jovany Alvarez</li>
-            <li>Axel Torres</li>
-        </ul>
-    </footer>
+<div id="depositModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('depositModal')">&times;</span>
+        <h2>Simular Depósito</h2>
+        <form id="depositForm">
+            <div class="form-group">
+                <label>Monto a ingresar (Mínimo $10.00)</label>
+                <input type="number" id="depAmount" step="0.01" required>
+            </div>
+            <button type="submit" class="btn-primary">Confirmar</button>
+        </form>
+    </div>
+</div>
 
-    <script src="dashboard.js"></script>
+<div id="transferModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('transferModal')">&times;</span>
+        <h2>Transferir Dinero</h2>
+        <form id="transferForm">
+            <div class="form-group">
+                <label>Correo del Destinatario</label>
+                <input type="email" id="destEmail" required>
+            </div>
+            <div class="form-group">
+                <label>Monto de envío</label>
+                <input type="number" id="transAmount" min="1" step="0.01" required>
+            </div>
+            <button type="submit" class="btn-primary">Ejecutar</button>
+        </form>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('settingsModal')">&times;</span>
+        <h2>Configuración de Perfil</h2>
+        <form id="profileForm">
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="editFirstName" required>
+            </div>
+            <div class="form-group">
+                <label>Apellido:</label>
+                <input type="text" id="editLastName" required>
+            </div>
+            <button type="submit" class="btn-primary">Guardar Cambios</button>
+        </form>
+        <hr>
+        <button id="btnDeleteAccount" class="btn-danger">Eliminar Cuenta Permanentemente</button>
+    </div>
+</div>
+
+<div id="paymentModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('paymentModal')">&times;</span>
+        <h2>Pago con Tarjeta</h2>
+        <form id="paymentForm">
+            <input type="hidden" name="device_session_id" id="device_session_id">
+            <div class="form-group">
+                <label>Nombre en tarjeta</label>
+                <input type="text" id="card_holder" required>
+            </div>
+            <div class="form-group">
+                <label>Número de tarjeta</label>
+                <input type="text" id="card_number" required>
+            </div>
+            <div class="form-group" style="display:flex; gap:10px;">
+                <input type="text" id="exp_month" placeholder="MM" style="width:50px" required>
+                <input type="text" id="exp_year" placeholder="AA" style="width:50px" required>
+                <input type="text" id="cvv" placeholder="CVV" style="width:60px" required>
+            </div>
+            <button type="submit" class="btn-primary">Pagar Ahora</button>
+        </form>
+    </div>
+</div>
+
+<footer class="desarrolladores">
+    <p>Desarrolladores:</p>
+    <ul>
+        <li>Jovany Alvarez</li>
+        <li>Axel Torres</li>
+    </ul>
+</footer>
+
+<script src="https://js.openpay.mx/openpay.v1.min.js"></script>
+<script src="https://js.openpay.mx/openpay-data.v1.min.js"></script>
+<script src="dashboard.js"></script>
 </body>
-
 </html>
