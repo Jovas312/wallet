@@ -39,9 +39,16 @@ async function loadData() {
             `;
         });
     } catch (err){
-        console.error("Error cargando datos", err);
-        localStorage.clear();
-        window.location.href = "login.html";
+        console.error("Error capturado:", err);
+        // Lógica inteligente de redirección
+        if (err.status === 401 || err.status === 403) {
+            alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+            localStorage.clear();
+            window.location.href = "login.html";
+        } else {
+            // Si es 404, 500, o error de red, solo avisamos
+            alert("No pudimos cargar tus datos en este momento. Intenta más tarde.");
+        }
     }
 }
 

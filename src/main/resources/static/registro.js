@@ -19,9 +19,11 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
     });
     
     if (res.ok) {
-        alert("Registro exitoso");
-        window.location.href = "login.html";
+        const data = await res.json();
+        localStorage.setItem("token", data.token); // Guardas el token
+        localStorage.setItem("email", user.email); // Guardas el email
+        window.location.href = "dashboard.html";
     } else {
-        alert("Error al registrar");
+        alert("Error al registrar: " + res.statusText);
     }
 });
