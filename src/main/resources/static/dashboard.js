@@ -18,7 +18,7 @@ async function loadData() {
         if(!response.ok) throw new Error("Sesión expirada");
 
         const data = await response.json();
-        document.getElementById("walletBalance").innerText = data.saldo.toFixed(2);
+        document.getElementById("walletBalance").innerText = data.balance.toFixed(2);
 
         const resTrans = await fetch(`${API_URL}/transactions/${email}`, {
         headers: { 'Authorization': `Bearer ${token}` }
