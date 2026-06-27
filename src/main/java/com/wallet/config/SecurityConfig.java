@@ -50,9 +50,10 @@ public class SecurityConfig {
                     auth.requestMatchers("/ws-wallet/**").permitAll();
                     auth.requestMatchers("/api/v1/transactions/**").authenticated();
                     auth.requestMatchers("/api/v1/users/**").authenticated();
-                    auth.requestMatchers("/", "/login.html", "/favicon.ico", "/*.js", "/*.css").permitAll();
-                    auth.anyRequest().authenticated();
+                    auth.requestMatchers("/", "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.ico", "/**/*.png", "/**/*.jpg").permitAll();
+                    auth.anyRequest().denyAll();
                 })
+                .formLogin(form -> form.loginPage("/login.html"))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
