@@ -43,7 +43,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/ws-wallet/**").permitAll();
                     auth.requestMatchers("/api/v1/transactions/**").authenticated();
                     auth.requestMatchers("/api/v1/users/**").authenticated();
-                    auth.requestMatchers("/", "/index.html", "/favicon.ico", "/*.js", "/*.css").permitAll();
+                    auth.requestMatchers("/", "/login.html", "/favicon.ico", "/*.js", "/*.css").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .exceptionHandling(exception -> exception
